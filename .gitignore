@@ -1,9 +1,14 @@
 meishiji
 .idea
-meishiji.zip
-menu_recipe
+__pycache__/
+outputs/
 sources/*
+error_menu.txt
+sources/Useless/meishiji.zip
+menu_recipe
 match_record.csv
 match_record.txt
-error_menu.txt
+outputs/error_menu.txt
 Histogram.png
+*.png
+*.csv
