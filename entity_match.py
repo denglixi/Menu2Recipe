@@ -180,7 +180,7 @@ def multiprocess_main():
         record_str = "{}\t{}\t{:.2}\n".format(
             menu_text,
             matched_target_str,
-            matched_score
+            float(matched_score)
         )
         # write outputs to different record files
         if len(unmatched_entities) == 0:
