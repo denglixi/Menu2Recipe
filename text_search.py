@@ -1,9 +1,9 @@
 
-def text_search(source, target):
+def text_search(source, targets):
     """
     Given a source str, search the most matched string in the target set
     :param source: a source string
-    :param target: a string iterable set
+    :param targets: a string iterable set
     :return:
     """
     matched_idx = -1
@@ -11,7 +11,7 @@ def text_search(source, target):
     matched_len = 0
     matched_target = ""
     matched_percentage = 0
-    for i, target_text in enumerate(target):
+    for i, target_text in enumerate(targets):
         temp_matched_len, temp_matched_text = find_lcsubstr(source, target_text)
         temp_percentage = (temp_matched_len / len(source) + temp_matched_len / len(target_text)) / 2
         # if temp_matched_len > matched_len:

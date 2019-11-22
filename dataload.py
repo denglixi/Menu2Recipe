@@ -10,16 +10,6 @@ def load_recipe_jieba_date(path):
     table = data.sheets()[0]
     return zip(table.col_values(0), table.col_values(3))
 
-def load_menu_data(path):
-    """
-    load menu data with csv format
-    :param path:
-    :return:
-    """
-    csv_data = pd.read_csv(path, error_bad_lines=False, encoding='utf-8')
-    return csv_data
-
-
 def load_recipe_data(path):
     """
     load recipe data with json format
