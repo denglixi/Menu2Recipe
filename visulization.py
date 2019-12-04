@@ -13,7 +13,7 @@ def auto_label(labels, bins):
                  fontsize=12)
 
 
-def draw_hist(data, save_name='Histogram'):
+def draw_hist(data, save_path='Histogram'):
     """
     draw hist with data
     :param data:
@@ -30,5 +30,5 @@ def draw_hist(data, save_name='Histogram'):
     # 设置y轴的上限
     plt.ylim(ymax=np.ceil(maxfreq / 10) * 10 if maxfreq % 10 else maxfreq + 10)
     auto_label(n, bins)
-    plt.savefig(save_name)
+    plt.savefig(save_path)
     # plt.show()

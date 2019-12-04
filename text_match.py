@@ -3,7 +3,7 @@ import json
 import matplotlib.pyplot as plt
 import numpy as np
 import os
-from dataload import load_menu_data, load_recipe_data, merger_all_json, read_bohe_recipe
+from dataload import  load_recipe_data, merger_all_json, read_bohe_recipe
 from text_search import text_search
 from visulization import draw_hist
 
@@ -50,10 +50,10 @@ def main():
     main function
     """
     menu_path = './sources/sample_menu_cleaned2.csv'
-    menu_data = load_menu_data(menu_path)
+    menu_data = pd.read_csv(menu_path, error_bad_lines=False, encoding='utf-8')
 
     attribute_path = './sources/recipe_attribute.csv'
-    attribute_data = load_menu_data(attribute_path)
+    attribute_data = pd.read_csv(attribute_path, error_bad_lines=False, encoding='utf-8')
     # id,source,food name,entity,shape,taste,cooking method,other,type
     attr_entity = set(attribute_data['entity'])
     attr_shape = set(attribute_data['shape'])
@@ -72,15 +72,18 @@ def main():
     # meishijie_recipe_path = './sources/recipe/meishiji'
     # meishijie_recipe_data = merger_all_json(meishijie_recipe_path)
     # meishijie_recipe_data = [x['name'] for x in meishijie_recipe_data]
+    # print(len(meishijie_recipe_data))
 
     # bohe_recipe_path = './sources/recipe/beehoo_recipe'
     # bohe_recipe_data = read_bohe_recipe(bohe_recipe_path)
+    # print(len(bohe_recipe_data))
 
     mini_pro_recipe_path = "./sources/recipe/mini_pro_recipe.csv"
-    mini_pro_recipe_data = load_menu_data(mini_pro_recipe_path)
+    mini_pro_recipe_data = pd.read_csv(mini_pro_recipe_path, error_bad_lines=False, encoding='utf-8')
     mini_pro_recipe_data = [x[1]['name'] for x in mini_pro_recipe_data.iterrows()]
+    print(len(mini_pro_recipe_data))
 
-    # noisy_recipe_path = './sources/recipe.json'
+    # noisy_recipe_path = './sources/recipe/noisy_meishijie_recipe.json'
     # noisy_recipe_data = load_recipe_data(noisy_recipe_path)
     # noisy_recipe_data = [x['name'] for x in noisy_recipe_data]
 

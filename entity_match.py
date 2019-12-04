@@ -3,15 +3,16 @@ import json
 import matplotlib.pyplot as plt
 import numpy as np
 import os
-from dataload import load_recipe_data, merger_all_json, read_bohe_recipe, load_recipe_jieba_date
-from attribute import read_attribute_from_csv
-from text_search import text_search
-from visulization import draw_hist
 import jieba
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import time
 import math
+import datetime
 
+from dataload import load_recipe_data, merger_all_json, read_bohe_recipe, load_recipe_jieba_date
+from attribute import read_attribute_from_csv, load_attribute_from_json
+from text_search import text_search
+from visulization import draw_hist
 
 def add_voc_by_attribute(path):
     attribute_data = pd.read_csv(path, error_bad_lines=False, encoding='utf-8')
@@ -121,39 +122,49 @@ def find_unmatched_entities(sources, targets):
 def multiprocess_main():
     # Initialization
     # menu
-    menu_path = './sources/sample_menu_cleaned2.csv'
+    menu_path = './sources/Menu/sample_menu_cleaned2.csv'
     menu_data = pd.read_csv(menu_path, error_bad_lines=False, encoding='utf-8')
     # attribute
-    attribute_path = './sources/recipe_attribute.csv'
+    attribute_path = './sources/Attribute/recipe_attribute.csv'
     add_voc_by_attribute(attribute_path)
     attributes = read_attribute_from_csv(attribute_path)
+
+    attribute_json_path = './sources/Attribute/attributes.json'
+    attributes = load_attribute_from_json(attribute_json_path)
     # recipe
-    #recipe_jieba_path = './sources/recipe_name_jieba.xlsx'
-    recipe_jieba_path = './sources/recipe_name_jieba_exclude_meishijie.xlsx'
+    recipe_jieba_path = './sources/recipe/recipe_name_jieba.xlsx'
+    #recipe_jieba_path = './sources/recipe/recipe_name_jieba_exclude_meishijie.xlsx'
     recipe_jieba_data = load_recipe_jieba_date(recipe_jieba_path)
     # get the jieba results
     recipe_jieba_data = [x[1].split('/') for x in recipe_jieba_data]
     recipe_jieba_data = recipe_jieba_data[1:]
+
     # saving setting
     recipe_data = recipe_jieba_data
     suffix_str = 'exclude_useless_attri'
     recipe_name = 'jieba_' \
                   '{}_{}'.format(len(recipe_data), suffix_str)
     print("length of recipes: {}".format(len(recipe_data)))
-    record_file = open('outputs/match_record_{}.csv'.format(recipe_name), 'w', encoding='utf-8')
-    error_file = open('outputs/error_menu_{}.txt'.format(recipe_name), 'w', encoding='utf-8')
-    totalmatched_record_file = open('outputs/match_record_{}_totalmatched.csv'.format(recipe_name), 'w',
-                                    encoding='utf-8')
-    type_record_file = open('outputs/match_record_{}_type.csv'.format(recipe_name), 'w', encoding='utf-8')
-    cooking_record_file = open('outputs/match_record_{}_cooking.csv'.format(recipe_name), 'w', encoding='utf-8')
-    useless_record_file = open('outputs/match_record_{}_useless.csv'.format(recipe_name), 'w', encoding='utf-8')
-    style_record_file = open('outputs/match_record_{}_style.csv'.format(recipe_name), 'w', encoding='utf-8')
-    ingredient_record_file = open('outputs/match_record_{}_ingredient.csv'.format(recipe_name), 'w', encoding='utf-8')
+
+    output_save_dir = 'outputs/match_record_{}'.format(recipe_name)
+    if not os.path.exists(output_save_dir):
+        os.makedirs(output_save_dir)
+    record_file = open(os.path.join(output_save_dir, 'all.csv'), 'w', encoding='utf-8')
+    error_file = open(os.path.join(output_save_dir, 'error_menu.txt'), 'w', encoding='utf-8')
+    totalmatched_record_file = open(os.path.join(output_save_dir,'totalmatched.csv'), 'w',  encoding='utf-8')
+    type_record_file = open('outputs/match_record_{}/type.csv'.format(recipe_name), 'w', encoding='utf-8')
+    cooking_record_file = open('outputs/match_record_{}/cooking.csv'.format(recipe_name), 'w', encoding='utf-8')
+    useless_record_file = open('outputs/match_record_{}/useless.csv'.format(recipe_name), 'w', encoding='utf-8')
+    style_record_file = open('outputs/match_record_{}/style.csv'.format(recipe_name), 'w', encoding='utf-8')
+    ingredient_record_file = open('outputs/match_record_{}/ingredient.csv'.format(recipe_name), 'w', encoding='utf-8')
+    unknown_record_file = open('outputs/match_record_{}/unknown.csv'.format(recipe_name), 'w', encoding='utf-8')
     # visualization
     matched_weighted_result = []
     # multi processing setting
     procsss_pool = ProcessPoolExecutor()
     fs_list = []
+
+
     # set up multiprocess pool
     for menu_idx, menu in menu_data.iterrows():
         if menu_idx % 200 == 0:
@@ -168,7 +179,12 @@ def multiprocess_main():
                                                attributes))
         except Exception as e:
             print(e)
+
+
     # get results from pool
+
+    unmatched_uncategoried_entities = []
+
     fs_count = 0
     for feature in as_completed(fs_list):
         fs_count += 1
@@ -198,11 +214,20 @@ def multiprocess_main():
         elif all_in_set(unmatched_entities,
                         attributes['other'] | attributes['shape'] | attributes['taste'] | attributes['type'] |
                         attributes['cooking method']):
+            unmatched_entities_str = " ".join(unmatched_entities)
+            record_str = "{}\t{}\t{:.2}\t{}\n".format(
+                menu_text,
+                matched_target_str,
+                float(matched_score), unmatched_entities_str)
             useless_record_file.write(record_str)
             useless_record_file.flush()
-        else:
+        if all_in_set(unmatched_entities, attributes['entity']):
+
             ingredient_record_file.write(record_str)
             ingredient_record_file.flush()
+        else:
+            unknown_record_file.write(record_str)
+            unknown_record_file.flush()
         record_file.write(record_str)
         record_file.flush()
 
