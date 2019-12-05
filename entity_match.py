@@ -214,18 +214,17 @@ def multiprocess_main():
         elif all_in_set(unmatched_entities,
                         attributes['other'] | attributes['shape'] | attributes['taste'] | attributes['type'] |
                         attributes['cooking method']):
+            useless_record_file.write(record_str)
+            useless_record_file.flush()
+        if all_in_set(unmatched_entities, attributes['entity']):
+            ingredient_record_file.write(record_str)
+            ingredient_record_file.flush()
+        else:
             unmatched_entities_str = " ".join(unmatched_entities)
             record_str = "{}\t{}\t{:.2}\t{}\n".format(
                 menu_text,
                 matched_target_str,
                 float(matched_score), unmatched_entities_str)
-            useless_record_file.write(record_str)
-            useless_record_file.flush()
-        if all_in_set(unmatched_entities, attributes['entity']):
-
-            ingredient_record_file.write(record_str)
-            ingredient_record_file.flush()
-        else:
             unknown_record_file.write(record_str)
             unknown_record_file.flush()
         record_file.write(record_str)
