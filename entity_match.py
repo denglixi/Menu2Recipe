@@ -216,7 +216,7 @@ def multiprocess_main():
                         attributes['cooking method']):
             useless_record_file.write(record_str)
             useless_record_file.flush()
-        if all_in_set(unmatched_entities, attributes['entity']):
+        elif all_in_set(unmatched_entities, attributes['entity']):
             ingredient_record_file.write(record_str)
             ingredient_record_file.flush()
         else:
