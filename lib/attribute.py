@@ -1,6 +1,8 @@
-import pandas as pd
 import json
 import re
+
+import pandas as pd
+
 
 def read_attribute_from_csv(attribute_path):
     attribute_data = pd.read_csv(attribute_path, error_bad_lines=False, encoding='utf-8')
@@ -39,10 +41,12 @@ def read_attribute_from_csv(attribute_path):
                   'type': attr_type}
     return attributes
 
+
 def write_attribute_to_json(attributes):
     attribute_json_path = './sources/attributes.json'
     with open(attribute_json_path, 'w', encoding='utf-8') as f:
         json.dump(attributes, f, ensure_ascii=False)
+
 
 def load_attribute_from_json(attr_json_path):
     with open(attr_json_path, 'r', encoding='utf-8') as f:
@@ -50,6 +54,7 @@ def load_attribute_from_json(attr_json_path):
         for k in attributes:
             attributes[k] = set(attributes[k])
     return attributes
+
 
 if __name__ == '__main__':
     attribute_path = './sources/Attribute/recipe_attribute.csv'
