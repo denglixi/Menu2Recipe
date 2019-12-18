@@ -1,4 +1,4 @@
-from dataload import load_jieba_date
+from lib.dataload import load_jieba_date
 
 
 import jieba

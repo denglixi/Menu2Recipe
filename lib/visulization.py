@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
+
 def auto_label(labels, bins):
     """
     Attach a text label above each bar displaying its height

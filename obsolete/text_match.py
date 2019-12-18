@@ -1,11 +1,7 @@
 import pandas as pd
-import json
-import matplotlib.pyplot as plt
-import numpy as np
-import os
-from dataload import  load_recipe_data, merger_all_json, read_bohe_recipe
-from text_search import text_search
-from visulization import draw_hist
+from lib.dataload import merge_all_json
+from lib.text_search import text_search_lcs
+from lib.visulization import draw_hist
 
 
 
@@ -14,15 +10,6 @@ from visulization import draw_hist
 def get_unmatched_text(source_text, target_text, matched_text):
     # result a list of strings
     return source_text.split(matched_text), target_text.split(matched_text)
-
-
-def cook_attr_func():
-    pass
-
-def process_of_attriute(attr_type):
-    if attr_type == 'cooking method':
-        return cook_attr_func
-
 
 def clean_unmatched_text_by_attribute(attributes, unmatched_text):
     result_dict = {}
@@ -69,26 +56,26 @@ def main():
                   'type': attr_type}
 
     # json data
-    # meishijie_recipe_path = './sources/recipe/meishiji'
-    # meishijie_recipe_data = merger_all_json(meishijie_recipe_path)
-    # meishijie_recipe_data = [x['name'] for x in meishijie_recipe_data]
-    # print(len(meishijie_recipe_data))
+    meishijie_recipe_path = './sources/recipe/meishiji'
+    meishijie_recipe_data = merge_all_json(meishijie_recipe_path)
+    meishijie_recipe_data = [x['name'] for x in meishijie_recipe_data]
+    print(len(meishijie_recipe_data))
 
     # bohe_recipe_path = './sources/recipe/beehoo_recipe'
     # bohe_recipe_data = read_bohe_recipe(bohe_recipe_path)
     # print(len(bohe_recipe_data))
 
-    mini_pro_recipe_path = "./sources/recipe/mini_pro_recipe.csv"
-    mini_pro_recipe_data = pd.read_csv(mini_pro_recipe_path, error_bad_lines=False, encoding='utf-8')
-    mini_pro_recipe_data = [x[1]['name'] for x in mini_pro_recipe_data.iterrows()]
-    print(len(mini_pro_recipe_data))
+    # mini_pro_recipe_path = "./sources/recipe/mini_pro_recipe.csv"
+    # mini_pro_recipe_data = pd.read_csv(mini_pro_recipe_path, error_bad_lines=False, encoding='utf-8')
+    # mini_pro_recipe_data = [x[1]['name'] for x in mini_pro_recipe_data.iterrows()]
+    # print(len(mini_pro_recipe_data))
 
     # noisy_recipe_path = './sources/recipe/noisy_meishijie_recipe.json'
     # noisy_recipe_data = load_recipe_data(noisy_recipe_path)
     # noisy_recipe_data = [x['name'] for x in noisy_recipe_data]
 
     # recipe_data = set(noisy_recipe_data + mini_pro_recipe_data + bohe_recipe_data + meishijie_recipe_data)
-    recipe_data = set(mini_pro_recipe_data)
+    recipe_data = set(meishijie_recipe_data)
     recipe_name = 'mini_pro_' \
                   '{}'.format(len(recipe_data))
     print("length of recipes: {}".format(len(recipe_data)))
@@ -104,8 +91,8 @@ def main():
         try:
             # for some menu are wrong
             source_text = menu['name']
-            matched_idx, matched_text, matched_len, matched_target = text_search(menu['name'],
-                                                                                 recipe_data)
+            matched_idx, matched_text, matched_len, matched_target = text_search_lcs(menu['name'],
+                                                                                     recipe_data)
             unmatched_source_text, unmatched_target_text = get_unmatched_text(menu['name'], matched_target,
                                                                               matched_text)
             cleaned_source_text = clean_unmatched_text_by_attribute(attributes, unmatched_source_text)

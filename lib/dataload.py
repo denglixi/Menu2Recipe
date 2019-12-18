@@ -1,14 +1,15 @@
-import pandas as pd
 import json
-import matplotlib.pyplot as plt
-import numpy as np
 import os
+
+import pandas as pd
 import xlrd
+
 
 def load_recipe_jieba_date(path):
     data = xlrd.open_workbook(path)
     table = data.sheets()[0]
     return zip(table.col_values(0), table.col_values(3))
+
 
 def load_recipe_data(path):
     """
@@ -21,7 +22,7 @@ def load_recipe_data(path):
     return json_data
 
 
-def merger_all_json(path):
+def merge_all_json(path):
     """
     merge all json on the path
     :param path:
@@ -41,6 +42,7 @@ def merger_all_json(path):
                     continue
     return json_data
 
+
 def read_bohe_recipe(path):
     recipe = []
     for root, dir, files in os.walk(path):
@@ -53,4 +55,3 @@ def read_bohe_recipe(path):
                     print(e)
                     print(f)
     return recipe
-
