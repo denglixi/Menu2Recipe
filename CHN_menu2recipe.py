@@ -71,7 +71,7 @@ def multiprocess_main():
             menu_text_splited = list(jieba.cut(menu_text, cut_all=False))
             fs_list.append(procsss_pool.submit(entity_match,
                                                menu_text_splited,
-                                               recipe_jieba_data,
+                                               recipe_data,
                                                attributes))
         except Exception as e:
             print(e)

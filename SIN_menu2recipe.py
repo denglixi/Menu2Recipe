@@ -1,5 +1,7 @@
 import os
 from concurrent.futures import ProcessPoolExecutor, as_completed
+from functools import wraps
+
 
 import jieba
 import pandas as pd
@@ -8,6 +10,12 @@ from lib.CHN_entity_match import entity_match, find_unmatched_entities
 from lib.text_search import text_search_fully_match
 from lib.utilis import all_in_set
 from lib.visulization import draw_hist
+from lib.restaurant import build_id2res_dict_from_file
+
+
+def text_search_fully_match_with_resid(func, res_id, *args, **kwargs):
+    matched_score, matched_target, matched_voc_list, menu_str = func(*args, **kwargs)
+    return res_id, matched_score, matched_target, matched_voc_list, menu_str
 
 
 def multiprocess_main():
@@ -23,6 +31,10 @@ def multiprocess_main():
     recipe_food_composition_data = pd.read_csv(recipe_food_composition_path, error_bad_lines=False, encoding='utf-8')
     recipe_food_composition_data.drop_duplicates('display_name', 'first', True)
     recipe_food_composition_data = [x['display_name'].split(" ") for _, x in recipe_food_composition_data.iterrows()]
+
+    #restaurant
+    res_file = './sources/Singapore/sample_restaurant_sg.csv'
+    id2res_dict = build_id2res_dict_from_file(res_file)
 
     # saving setting
     recipe_data = recipe_food_composition_data
@@ -57,9 +69,12 @@ def multiprocess_main():
             # try exception for some menu are wrong
             menu_text = menu['name']
             menu_text_splited = menu_text.split(" ")
-            fs_list.append(procsss_pool.submit(text_search_fully_match,
+            #a = process_pool_func(text_search_fully_match,menu['restaurant_id'],  menu_text_splited, recipe_data)
+            fs_list.append(procsss_pool.submit(text_search_fully_match_with_resid,
+                                               text_search_fully_match,
+                                               menu['restaurant_id'],
                                                menu_text_splited,
-                                               recipe_data,
+                                               recipe_data
                                                ))
         except Exception as e:
             print(e)
@@ -71,10 +86,13 @@ def multiprocess_main():
         fs_count += 1
         if fs_count % 20 == 0:
             print(fs_count)
-        matched_score, matched_target, matched_voc_list, menu_str= feature.result()
+        res_id, matched_score, matched_target, matched_voc_list, menu_str= feature.result()
         #unmatched_entities = set(find_unmatched_entities(menu_text, matched_target_str))
         #matched_weighted_result.append(matched_score)
-        record_str = "{}\t{}\t{:.2}\n".format(
+        res_name = id2res_dict[res_id]
+
+        record_str = "{}\t{}\t{}\t{:.2}\n".format(
+            res_name,
             menu_str,
             matched_target,
             float(matched_score)
