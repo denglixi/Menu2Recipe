@@ -17,12 +17,18 @@ def text_search_fully_match(source, targets):
             matched_score = temp_matched_score
             matched_target = " ".join(target_text)
             matched_voc_list = temp_matched_voc_list
+            matched_idx = i
     menu_str = " ".join(source)
 
-    return matched_score, matched_target, matched_voc_list, menu_str
+    return matched_score, matched_target, matched_voc_list, menu_str, matched_idx
 
 
 def find_unmatched_vocabularies(source, target):
+    """
+    :param source:
+    :param target:
+    :return:
+    """
     sources = source.split(" ")
     targets = target.split(" ")
     unmatched_entities = []
@@ -49,7 +55,7 @@ def vocabulary_match(sources, targets):
     matched_voc_list = []
     for s_v in sources:
         for t_v in targets:
-            if s_v == t_v:
+            if s_v.lower() == t_v.lower():
                 matched_count += 1
                 matched_voc_list.append(s_v)
     return matched_count, matched_voc_list
@@ -58,6 +64,7 @@ def vocabulary_match(sources, targets):
 def text_search_lcs(source, targets):
     """
     Given a source str, search the most matched string in the target set by longest Common Subsequence algorithm
+    The core algorithm can be replaced by FuzzyWuzzy lib.
     :param source: a source string
     :param targets: a string iterable set
     :return:

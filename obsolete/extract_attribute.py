@@ -13,5 +13,4 @@ pre_defined_attribute = {'快': 'shape', '片': 'shape', '丝': 'shape', '条': 
                          '红焖': 'method_焖', '黄焖': 'method_焖', '红烧': 'method_烧', '白烧': 'method_烧', '干烧': 'method_烧',
                          '油烧': 'method_烧', '汤烧': 'method_烧', '酸':'taste','辣':'taste','苦':'taste','鲜':'taste','香':'taste','酸甜':'taste','甜咸':'taste','鲜咸':'taste','辣咸':'taste','香辣':'taste','香咸':'taste','饭':'type','面':'type','粉':'type','汤':'type'}
 
-for i in ss:
-    print("'{}':'{}'".format(i, "type") + ',', end='')
+

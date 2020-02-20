@@ -26,6 +26,13 @@ def find_unmatched_entities(sources, targets):
 
 
 def entity_match(source_entities, target_entities_list, attributes):
+    """
+    match source entities to target lists of eneities
+    :param source_entities: a list of entities.
+    :param target_entities_list: a list of list of entities
+    :param attributes:
+    :return:
+    """
     max_matched_score = 0
     matched_target_idx = -1
     matched_target_str = ''
@@ -50,7 +57,7 @@ def entity_match(source_entities, target_entities_list, attributes):
         target_len = len(target_entities_use) * 0.5
         # TODO which factor
         score_factor = source_len + target_len
-        # score_factor = source_len
+
         # exclude empty target
         if target_len == 0:
             continue

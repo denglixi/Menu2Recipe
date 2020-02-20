@@ -17,13 +17,14 @@ def multiprocess_main():
     # menu
     menu_path = './sources/Menu/sample_menu_cleaned2.csv'
     menu_data = pd.read_csv(menu_path, error_bad_lines=False, encoding='utf-8')
+
     # attribute
     attribute_path = './sources/Attribute/recipe_attribute.csv'
     add_voc_by_attribute(attribute_path)
     attributes = read_attribute_from_csv(attribute_path)
-
     attribute_json_path = './sources/Attribute/attributes.json'
     attributes = load_attribute_from_json(attribute_json_path)
+
     # recipe
     recipe_jieba_path = './sources/recipe/recipe_name_jieba.xlsx'
     # recipe_jieba_path = './sources/recipe/recipe_name_jieba_exclude_meishijie.xlsx'

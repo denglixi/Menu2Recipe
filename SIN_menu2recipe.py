@@ -1,3 +1,6 @@
+'''
+menu to recipe mapping for singapore food.
+'''
 import os
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from functools import wraps
@@ -14,8 +17,8 @@ from lib.restaurant import build_id2res_dict_from_file
 
 
 def text_search_fully_match_with_resid(func, res_id, *args, **kwargs):
-    matched_score, matched_target, matched_voc_list, menu_str = func(*args, **kwargs)
-    return res_id, matched_score, matched_target, matched_voc_list, menu_str
+    matched_score, matched_target, matched_voc_list, menu_str, matched_idx = func(*args, **kwargs)
+    return res_id, matched_score, matched_target, matched_voc_list, menu_str, matched_idx
 
 
 def multiprocess_main():
@@ -86,7 +89,7 @@ def multiprocess_main():
         fs_count += 1
         if fs_count % 20 == 0:
             print(fs_count)
-        res_id, matched_score, matched_target, matched_voc_list, menu_str= feature.result()
+        res_id, matched_score, matched_target, matched_voc_list, menu_str, matched_idx = feature.result()
         #unmatched_entities = set(find_unmatched_entities(menu_text, matched_target_str))
         #matched_weighted_result.append(matched_score)
         res_name = id2res_dict[res_id]
