@@ -1,0 +1,8 @@
+version: "3.7"
+services:
+    menu2recipe:
+        build: .
+        image: menu2recipe
+        volumes:
+            - ./sources:/app/sources
+
